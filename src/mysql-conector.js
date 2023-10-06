@@ -21,10 +21,10 @@ const conectarBBDD = () => {
 const conectar = () => {
     conexion.connect(err => {
         if(err){
-            console.error(err);
+            //console.error(err);
         }
         else{
-            console.log("conexion exitosa a la base de datos");
+            //console.log("conexion exitosa a la base de datos");
         }
     });
 }
@@ -35,7 +35,7 @@ const consultaLogin = (usuario,password,res) => {
     conexion.query(sql, (err,resultado) => {
         
         if(err){
-            console.error(err);
+            //console.error(err);
         }
         else if(resultado.length==0){
             //si el resultado es vacio => error
@@ -43,7 +43,7 @@ const consultaLogin = (usuario,password,res) => {
         }
         else if(resultado.length==1){
             //si obtenemos un resultado => renderizar vista
-            console.log('login exitoso');
+            //console.log('login exitoso');
             const u = Object.values(resultado[0].usuario).join('');
             res.render('mensajeRedireccion',{mensaje: 1, usuario: u});
         }
@@ -51,11 +51,11 @@ const consultaLogin = (usuario,password,res) => {
 }
 
 const registrarUser = (usuario, password,res) => {
-    console.log(usuario,password);
+    //console.log(usuario,password);
     const sql = `INSERT INTO login (id_usuario, usuario, password) VALUES (${null},"${usuario}","${password}")`;
     conexion.query(sql, (err) => {
         if(err) throw err
-        console.log("registro exitoso");
+        //console.log("registro exitoso");
 
         conexion.end();//terminar conexion
 
@@ -67,7 +67,7 @@ let obtenerUsuarios = (res) => {
     const sql = 'SELECT * FROM usuarios';
     conexion.query(sql,(err,result) => {
         if(err){
-            throw err
+            //throw err
         }
         //console.log(result);
         res.render('home',{data: result});
@@ -78,7 +78,7 @@ const agregar = (nombre, email,res) => {
     const sql = `INSERT INTO usuarios (id_usuario, email, nombre) VALUES (${null},"${email}","${nombre}")`;
     conexion.query(sql, (err) => {
         if(err) throw err
-        console.log("insercion correcta");
+        //console.log("insercion correcta");
         res.render('mensajeRedireccion',{mensaje: 3, usuario: ''});
     });
 }
@@ -86,8 +86,10 @@ const agregar = (nombre, email,res) => {
 const borrarUsuario = (id,res) => {
     const sql = `DELETE FROM usuarios WHERE id_usuario=${id}`;
     conexion.query(sql, (err) => {
-        if(err) throw err
-        console.log("usuario eliminado correctamente");
+        if(err){
+            //throw err
+        }
+        //console.log("usuario eliminado correctamente");
         res.render('mensajeRedireccion',{mensaje: 5, usuario: ''});
     });
 }
@@ -97,7 +99,7 @@ let obtenerUsuario = (id,res) => {
 
     conexion.query(sql, (err, result) => {
         if(err){
-            throw err
+            //throw err
         }
         //console.log(result);
         //res.send('works cajeta modificar');
@@ -108,8 +110,10 @@ let obtenerUsuario = (id,res) => {
 const modificarUsuario = (id,nombre,email,res) => {
     
     conexion.query(`UPDATE usuarios SET nombre='${nombre}', email='${email}' WHERE id_usuario='${id}'`, (err) => {
-        if (err) throw err;
-        console.log("modificacion exitosa");
+        if (err){
+            //throw err;
+        }
+        //console.log("modificacion exitosa");
         res.render('mensajeRedireccion',{mensaje: 4, usuario: ''});
     });
 }
