@@ -9,34 +9,44 @@ var mensajeConexion='';
 
 
 //importar funciones de conexion a database
-const {conectarBBDD, conectar, obtenerUsuarios, agregar, borrarUsuario, obtenerUsuario, modificarUsuario, terminarConexion} = require('../mysql-conector.js');
+const {conectarBBDD, conectar, consultaLogin, obtenerUsuarios, agregar,borrarUsuario,
+    obtenerUsuario, modificarUsuario, terminarConexion, registrarUser} = require('../mysql-conector.js');
 
 router.get('/', (req,res) => {
     //res.send('viva yo');
-    res.render('index1');
+    res.render('login');
 });
 
-router.get('/conexionBD/:host/:puerto/:BBDD/:usuario/:password', (req,res) => {
-    
-    let host = req.params.host;
-    let puerto = req.params.puerto;
-    let BBDD = req.params.BBDD;
-    let usuario = req.params.usuario;
-    let password = req.params.password;
-    
-    console.log(host,puerto,BBDD,usuario,password);
+router.post('/login', (req,res) => {
+    const user = {
+        usuario: req.body.usuario,
+        password: req.body.password
+    };
 
-    conectarBBDD(host,puerto,BBDD,usuario,password);
-    mensajeConexion=conectar();
-    console.log(mensajeConexion);
-    res.redirect('/home');
-    /*
-    if(mensajeConexion=='Exito'){
-        res.redirect('/home');
-    }
-    else{
-        res.redirect('/');
-    }*/
+    conectarBBDD();
+    conectar();
+
+    consultaLogin(user.usuario,user.password,res);
+});
+
+
+router.get('/registrarse', (req,res) => {
+    res.render('registro');
+});
+
+router.post('/registrar', (req,res) => {
+
+    conectarBBDD();
+    conectar();
+
+    const newUser = {
+        usuario: req.body.usuario,
+        password: req.body.password
+    };
+    
+
+    registrarUser(newUser.usuario,newUser.password,res);
+
 });
 
 router.get('/home', (req,res) => {
@@ -49,8 +59,6 @@ router.get('/nuevo', (req,res) => {
 
 // router.post('/agregar/:nombre/:email', (req,res) => {
 router.post('/agregar', (req,res) => {
-    //let nombre = req.params.nombre;
-    //let email = req.params.email;
     const usuario = {
         nombre: req.body.nombre,
         email: req.body.email

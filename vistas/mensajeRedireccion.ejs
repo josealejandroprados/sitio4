@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        if (<%=mensaje%> == 1){
+            //Login con Exito
+            alert('Bienvenido <%=usuario%>');
+            window.location.href='/home';
+        }
+        else if(<%=mensaje%> == 2){
+            //registro con exito
+            alert('Registro Exitoso con el usuario <%=usuario%>, Por favor ingrese sesion nuevamente');
+            window.location.href='/';
+        }
+        else if(<%=mensaje%> == 3){
+            alert('Usuario agregado con exito!');
+            window.location.href='/home';
+        }
+        else if(<%=mensaje%> == 4){
+            alert('Usuario modificado con exito!');
+            window.location.href='/home';
+        }
+        else if(<%=mensaje%> == 5){
+            alert('Usuario eliminado con exito!');
+            window.location.href='/home';
+        }
+    </script>
+</body>
+</html>

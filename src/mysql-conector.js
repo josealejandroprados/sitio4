@@ -1,19 +1,19 @@
 //importar mysql
 const mysql = require('mysql2');
+//importamos parametros de conexion a la BBDD
+const {DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT} = require('./config.js');
 
 var conexion='';
-var mensajeConexion ='';
-//let todos =[];
 
-const conectarBBDD = (host,puerto,BBDD,usuario,password) => {
+const conectarBBDD = () => {
     //crear instancia de conexion
     conexion = mysql.createConnection(
         {
-            host: host,
-            user: usuario,
-            password: password,
-            database: BBDD,
-            port: puerto
+            host: DB_HOST,
+            user: DB_USER,
+            password: DB_PASSWORD,
+            database: DB_NAME,
+            port: DB_PORT
         }
     );
 }
@@ -21,14 +21,46 @@ const conectarBBDD = (host,puerto,BBDD,usuario,password) => {
 const conectar = () => {
     conexion.connect(err => {
         if(err){
-            mensajeConexion='Error';
+            console.error(err);
         }
         else{
-            console.log("conexion exitosa");
-            mensajeConexion='Exito';
+            console.log("conexion exitosa a la base de datos");
         }
     });
-    return mensajeConexion;
+}
+
+const consultaLogin = (usuario,password,res) => {
+    const sql = `SELECT * FROM login WHERE usuario='${usuario}' AND password='${password}'`;
+
+    conexion.query(sql, (err,resultado) => {
+        
+        if(err){
+            console.error(err);
+        }
+        else if(resultado.length==0){
+            //si el resultado es vacio => error
+            res.render('errorlogin',{mensaje: 'Error!, Verifique su usuario y contraseña!'});
+        }
+        else if(resultado.length==1){
+            //si obtenemos un resultado => renderizar vista
+            console.log('login exitoso');
+            const u = Object.values(resultado[0].usuario).join('');
+            res.render('mensajeRedireccion',{mensaje: 1, usuario: u});
+        }
+    });
+}
+
+const registrarUser = (usuario, password,res) => {
+    console.log(usuario,password);
+    const sql = `INSERT INTO login (id_usuario, usuario, password) VALUES (${null},"${usuario}","${password}")`;
+    conexion.query(sql, (err) => {
+        if(err) throw err
+        console.log("registro exitoso");
+
+        conexion.end();//terminar conexion
+
+        res.render('mensajeRedireccion',{mensaje: 2, usuario: usuario});
+    });
 }
 
 let obtenerUsuarios = (res) => {
@@ -47,7 +79,7 @@ const agregar = (nombre, email,res) => {
     conexion.query(sql, (err) => {
         if(err) throw err
         console.log("insercion correcta");
-        res.redirect('/home');
+        res.render('mensajeRedireccion',{mensaje: 3, usuario: ''});
     });
 }
 
@@ -56,7 +88,7 @@ const borrarUsuario = (id,res) => {
     conexion.query(sql, (err) => {
         if(err) throw err
         console.log("usuario eliminado correctamente");
-        res.redirect('/home');
+        res.render('mensajeRedireccion',{mensaje: 5, usuario: ''});
     });
 }
 
@@ -78,7 +110,7 @@ const modificarUsuario = (id,nombre,email,res) => {
     conexion.query(`UPDATE usuarios SET nombre='${nombre}', email='${email}' WHERE id_usuario='${id}'`, (err) => {
         if (err) throw err;
         console.log("modificacion exitosa");
-        res.redirect('/home');
+        res.render('mensajeRedireccion',{mensaje: 4, usuario: ''});
     });
 }
 
@@ -86,5 +118,15 @@ const terminarConexion = () => {
     conexion.end();
 }
 
-module.exports = {conectarBBDD, conectar, obtenerUsuarios, agregar,
-                borrarUsuario, obtenerUsuario, modificarUsuario, terminarConexion};
+module.exports = {
+    conectarBBDD,
+    conectar,
+    obtenerUsuarios,
+    agregar,
+    consultaLogin,
+    registrarUser,
+    borrarUsuario,
+    obtenerUsuario,
+    modificarUsuario,
+    terminarConexion
+};

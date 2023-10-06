@@ -1,4 +1,3 @@
-alert('Conexion exitosa a la Base de Datos');
 
 var tabla = document.getElementById('tabla'),
     elementosTabla = tabla.rows,
@@ -34,7 +33,12 @@ btnEliminar.addEventListener('click', () => {
         alert('¡Seleccione el usuario a eliminar!');
     }
     else{
-        window.location.href=`/borrar/${ID}`;
+        //Ingresamos un mensaje de confirmacion de eliminar
+        var mensaje = confirm("¿Esta seguro que desea eliminar el usuario?");
+        //Detectamos si el usuario acepto eliminar el usuario
+        if (mensaje) {
+            window.location.href=`/borrar/${ID}`;
+        }
     }
     //console.log('borrar');
 });
